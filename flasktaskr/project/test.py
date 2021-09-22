@@ -21,79 +21,79 @@ class AllTests(unittest.TestCase):
     db.session.remove()
     db.drop_all()
     
-  # def test_user_setup(self):
-  #   new_user = User('michael', 'michael@gmail.com', 'michaelpwd')
-  #   db.session.add(new_user)
-  #   db.session.commit()
-  #   result = db.session.query(User).all()
-  #   for r in result:
-  #     r.name 
-  #   assert r.name == "michael"   
+  def test_user_setup(self):
+    new_user = User('michael', 'michael@gmail.com', 'michaelpwd')
+    db.session.add(new_user)
+    db.session.commit()
+    result = db.session.query(User).all()
+    for r in result:
+      r.name 
+    assert r.name == "michael"   
 
-  # def test_form_is_present(self):
-  #   response = self.app.get('/')
-  #   self.assertEqual(response.status_code, 200)
-  #   print("resp data {}".format(response.data, file=sys.stderr))
-  #   self.assertIn(b'Please login to access your task list.', response.data)
+  def test_form_is_present(self):
+    response = self.app.get('/')
+    self.assertEqual(response.status_code, 200)
+    print("resp data {}".format(response.data, file=sys.stderr))
+    self.assertIn(b'Please login to access your task list.', response.data)
 
 
   def login(self, name, password):
     return self.app.post('/', data=dict(name=name,password=password), follow_redirects=True)
   
-  # def test_users_cannot_login_unless_registered(self):
-  #   response = self.login('foo', 'bar')
-  #   self.assertIn(b'Invalid username or password', response.data)
+  def test_users_cannot_login_unless_registered(self):
+    response = self.login('foo', 'bar')
+    self.assertIn(b'Invalid username or password', response.data)
 
 
-  # # test register user 
-  # def register(self, name, email, password, confirm):
-  #   return self.app.post('register/',
-  #       data=dict(name=name, email=email, password=password, confirm=confirm),
-  #       follow_redirects=True
-  #     )
+  # test register user 
+  def register(self, name, email, password, confirm):
+    return self.app.post('register/',
+        data=dict(name=name, email=email, password=password, confirm=confirm),
+        follow_redirects=True
+      )
 
-  # def test_users_can_login(self):
-  #   self.register('Michael', 'michael@realpython.com', 'pythonpwd', 'pythonpwd')
-  #   response = self.login('Michael', 'pythonpwd')
-  #   self.assertIn(b'Welcome!', response.data)
+  def test_users_can_login(self):
+    self.register('Michael', 'michael@realpython.com', 'pythonpwd', 'pythonpwd')
+    response = self.login('Michael', 'pythonpwd')
+    self.assertIn(b'Welcome!', response.data)
 
-  # def test_invalid_form_data(self):
-  #   self.register('swanand', 'swanand@gmail.com', 'swapwd', 'swapwd')
-  #   response = self.login('wronguser', 'foopwd')
-  #   self.assertIn(b'Invalid username or password.', response.data)
-
-
-  # def test_form_is_present_on_register_page(self):
-  #   response = self.app.get('register/')
-  #   self.assertEqual(response.status_code, 200)
-  #   self.assertIn(b'Please register to access the task list.', response.data)
-
-  # def test_user_registration(self):
-  #   #self.app.get('register/', follow_redirects=True)
-  #   resp = self.register('Michael', 'michael@realpython.com', 'python', 'python')
-  #   self.assertIn(b'Thanks for registering. Please login.', resp.data)
-
-  # # users can log out 
-  # def logout(self):
-  #   return self.app.get('logout/', follow_redirects=True)
+  def test_invalid_form_data(self):
+    self.register('swanand', 'swanand@gmail.com', 'swapwd', 'swapwd')
+    response = self.login('wronguser', 'foopwd')
+    self.assertIn(b'Invalid username or password.', response.data)
 
 
-  # def test_logged_in_users_can_logout(self):
-  #   self.register('Fletcher', 'fletcher@realpython.com', 'python101', 'python101')
-  #   self.login('Fletcher', 'python101')
-  #   resp = self.logout()
-  #   self.assertIn(b'Goodbye', resp.data)
+  def test_form_is_present_on_register_page(self):
+    response = self.app.get('register/')
+    self.assertEqual(response.status_code, 200)
+    self.assertIn(b'Please register to access the task list.', response.data)
 
-  # def test_not_logged_in_users_cannot_logout(self):
-  #   resp = self.logout()
-  #   self.assertNotIn(b'Goodbye', resp.data)
+  def test_user_registration(self):
+    #self.app.get('register/', follow_redirects=True)
+    resp = self.register('Michael', 'michael@realpython.com', 'python', 'python')
+    self.assertIn(b'Thanks for registering. Please login.', resp.data)
 
-  # def test_logged_in_users_can_access_tasks_page(self):
-  #   self.register('Fletcher', 'fletcher@realypython.com', 'python101', 'python101')
-  #   self.login('Fletcher', 'python101')
-  #   resp = self.app.get('tasks/')
-  #   self.assertEqual(resp.status_code, 200)
-  #   self.assertIn(b'Add a new task:', resp.data)
+  # users can log out 
+  def logout(self):
+    return self.app.get('logout/', follow_redirects=True)
+
+
+  def test_logged_in_users_can_logout(self):
+    self.register('Fletcher', 'fletcher@realpython.com', 'python101', 'python101')
+    self.login('Fletcher', 'python101')
+    resp = self.logout()
+    self.assertIn(b'Goodbye', resp.data)
+
+  def test_not_logged_in_users_cannot_logout(self):
+    resp = self.logout()
+    self.assertNotIn(b'Goodbye', resp.data)
+
+  def test_logged_in_users_can_access_tasks_page(self):
+    self.register('Fletcher', 'fletcher@realypython.com', 'python101', 'python101')
+    self.login('Fletcher', 'python101')
+    resp = self.app.get('tasks/')
+    self.assertEqual(resp.status_code, 200)
+    self.assertIn(b'Add a new task:', resp.data)
 
 
   # # tasks 
